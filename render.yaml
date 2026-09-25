@@ -1,0 +1,33 @@
+# Render Blueprint for the RakshaRoute backend.
+# Render will create the service from this file when you connect the repo.
+services:
+  - type: web
+    name: raksharoute-backend
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm ci
+    startCommand: node server.js
+    # Readiness check: /health returns 503 until MongoDB is connected.
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set these values in the Render dashboard (Render -> Service -> Environment) after the first deploy.
+      # Use a replica-set or managed MongoDB URI; booking writes are transactional.
+      - key: MONGO_URI
+        sync: false
+      # Use a cryptographically random secret of at least 32 characters.
+      - key: JWT_SECRET
+        sync: false
+      # Comma-separated list of allowed frontend origins (or unset = allow all).
+      # The live Vercel app is https://raksha-route-odfi.vercel.app; add any
+      # Vercel preview/branch origins here too, separated by commas.
+      - key: CORS_ORIGIN
+        value: https://raksha-route-odfi.vercel.app
+        sync: true
+      # Keep precise trip coordinates on the backend by default. Enable only
+      # after reviewing the public OSRM service's privacy and retention terms.
+      - key: ROAD_ROUTING_ENABLED
+        value: "false"
+        sync: true
