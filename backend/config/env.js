@@ -25,6 +25,26 @@ function getJwtSecret() {
   return secret;
 }
 
+function trimTrailingSlashes(value) {
+  return value.replace(/\/+$/, "");
+}
+
+/**
+ * Public origin used in password reset links. Falls back to the first allowed
+ * CORS origin so deployments only need to configure one URL in most cases.
+ */
+function getFrontendUrl() {
+  const configured = process.env.FRONTEND_URL?.trim();
+  if (configured) return trimTrailingSlashes(configured);
+
+  const corsOrigin = process.env.CORS_ORIGIN?.split(",")
+    .map((origin) => origin.trim())
+    .find((origin) => origin && origin !== "*");
+  if (corsOrigin) return trimTrailingSlashes(corsOrigin);
+
+  return "http://localhost:5173";
+}
+
 function getServerEnv() {
   return {
     MONGO_URI: getMongoUri(),
@@ -32,4 +52,10 @@ function getServerEnv() {
   };
 }
 
-module.exports = { getJwtSecret, getMongoUri, getServerEnv, requireEnv };
+module.exports = {
+  getFrontendUrl,
+  getJwtSecret,
+  getMongoUri,
+  getServerEnv,
+  requireEnv,
+};

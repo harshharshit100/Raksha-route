@@ -137,7 +137,8 @@ const bookAmbulance = async (req, res) => {
 
     if (!normalizedPatientPhone) {
       return res.status(400).json({
-        message: "Enter a valid patient phone number with 7 to 15 digits.",
+        message:
+          "Enter a valid 10-digit patient phone number starting with 6, 7, 8 or 9.",
       });
     }
 

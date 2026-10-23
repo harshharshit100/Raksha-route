@@ -67,7 +67,7 @@ test("booking creation is emitted only to owner, assigned driver, and fleet role
     _id: bookingId,
     user: { _id: ownerId, name: "Patient" },
     ambulance: { _id: ambulanceId, driver: driverId },
-    patientPhone: "555-0100",
+    patientPhone: "9876543210",
     pickupLocation: { type: "Point", coordinates: [76.7794, 30.7333] },
     status: "confirmed",
   };
@@ -101,7 +101,7 @@ test("booking creation is emitted only to owner, assigned driver, and fleet role
       longitude: 76.7794,
       destination: "City Hospital",
       patientName: "Patient",
-      patientPhone: "555-0100",
+      patientPhone: "9876543210",
     },
   };
   const res = responseRecorder();
@@ -141,7 +141,7 @@ test("booking status updates use the same scoped audience", async () => {
     _id: bookingId,
     user: ownerId,
     ambulance: { _id: ambulanceId, driver: driverId },
-    patientPhone: "555-0100",
+    patientPhone: "9876543210",
     pickupLocation: { type: "Point", coordinates: [76.7794, 30.7333] },
     status: "ongoing",
   };

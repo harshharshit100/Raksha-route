@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const {
   isValidCoordinatePair,
   isValidObjectId,
+  normalizePhone,
   parseCoordinatePair,
 } = require("../lib/validation");
 const Ambulance = require("../models/ambulance");
@@ -48,6 +49,30 @@ afterEach(() => {
     originalDevelopmentFleetEnabled;
   developmentFleet.ensureDevelopmentFleetNear =
     originalEnsureDevelopmentFleetNear;
+});
+
+test("patient phone numbers must be exactly 10 digits starting with 6, 7, 8 or 9", () => {
+  for (const value of [
+    "9876543210",
+    "6123456789",
+    "7000000000",
+    "8999999999",
+  ]) {
+    assert.equal(normalizePhone(value), value);
+  }
+
+  for (const value of [
+    "5876543210",
+    "1234567890",
+    "0123456789",
+    "987654321",
+    "98765432101",
+    "98765 43210",
+    "+919876543210",
+    "abcdefghij",
+  ]) {
+    assert.equal(normalizePhone(value), null);
+  }
 });
 
 test("coordinate parsing rejects null, booleans, empty values, and invalid ranges", () => {

@@ -52,6 +52,18 @@ const userSchema = new mongoose.Schema(
       default: "patient",
     },
 
+    // Only the SHA-256 hash of a password reset token is stored. The fields are
+    // hidden from normal queries so an account lookup never exposes them.
+    passwordResetToken: {
+      type: String,
+      select: false,
+    },
+
+    passwordResetExpires: {
+      type: Date,
+      select: false,
+    },
+
     // A user does not have a location until one is explicitly supplied. In
     // particular, do not create a misleading [0, 0] placeholder.
     location: pointField({ required: false, allowZero: true }),

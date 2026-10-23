@@ -28,6 +28,8 @@ import TripMap from "../TripMap";
 const FALLBACK_COORDS = { lat: 30.7333, lng: 76.7794 }; // Chandigarh
 const COORDINATE_ERROR =
   "Enter a latitude between -90 and 90 and a longitude between -180 and 180.";
+const PATIENT_PHONE_ERROR =
+  "Enter a valid 10-digit patient phone number starting with 6, 7, 8 or 9.";
 const ACTIVE_TRIP_STATUSES = new Set(["confirmed", "ongoing"]);
 const TERMINAL_TRIP_STATUSES = new Set(["completed", "cancelled"]);
 
@@ -44,6 +46,10 @@ function isValidLongitude(value) {
 
 function hasValidCoordinates(coords) {
   return isValidLatitude(coords?.lat) && isValidLongitude(coords?.lng);
+}
+
+function isValidPatientPhone(value) {
+  return /^[6-9][0-9]{9}$/.test(value);
 }
 
 function parseCoordinate(value) {
@@ -522,6 +528,23 @@ export default function Dashboard() {
 
   const handleBookingForm = (e) => {
     const { name, value } = e.target;
+
+    if (name === "patientPhone") {
+      const digits = value.replace(/\D/g, "");
+
+      // Allow clearing the field, otherwise keep only a valid 10-digit Indian
+      // mobile number: first digit 6-9 and no more than 10 digits.
+      if (digits === "") {
+        setBookingForm((prev) => ({ ...prev, patientPhone: "" }));
+        return;
+      }
+
+      if (!/^[6-9]/.test(digits) || digits.length > 10) return;
+
+      setBookingForm((prev) => ({ ...prev, patientPhone: digits }));
+      return;
+    }
+
     setBookingForm((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -531,6 +554,10 @@ export default function Dashboard() {
     setBookingError("");
     if (!hasValidCoordinates(coords)) {
       setBookingError(COORDINATE_ERROR);
+      return;
+    }
+    if (!isValidPatientPhone(bookingForm.patientPhone)) {
+      setBookingError(PATIENT_PHONE_ERROR);
       return;
     }
     setBookingLoading(true);
@@ -1007,10 +1034,14 @@ export default function Dashboard() {
                     <Field
                       label="Patient phone"
                       type="tel"
-                      placeholder="+91 98765 43210"
+                      placeholder="98765 43210"
                       name="patientPhone"
                       value={bookingForm.patientPhone}
                       onChange={handleBookingForm}
+                      inputMode="numeric"
+                      autoComplete="tel-national"
+                      maxLength={10}
+                      pattern="[6-9][0-9]{9}"
                       required
                     />
                     <Field

@@ -182,7 +182,7 @@ test("registration returns an actionable response while MongoDB is unavailable",
       name: "Database Offline",
       email: "offline@example.invalid",
       password: "Test123!",
-      phone: "+919876543210",
+      phone: "9876543210",
     }),
   });
 

@@ -28,3 +28,23 @@ USE_MEMORY_DB=false npm run dev
 `npm start` and `node server.js` use the configured `MONGO_URI` directly and are
 the production-style entrypoints. Production must provide a reachable MongoDB
 deployment and all required environment variables from `.env.example`.
+
+## Password reset
+
+The login page links to `/forgot-password`. The backend stores only a SHA-256
+hash of each reset token; links expire after 30 minutes and can be used once.
+
+To deliver reset emails, configure either:
+
+```bash
+SMTP_URL=smtp://user:password@smtp.example.com:587
+```
+
+or the individual `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, and
+`SMTP_PASS` variables. `MAIL_FROM` optionally sets the sender address.
+
+When SMTP is not configured during local development, the API logs the reset
+link to the terminal and the forgot-password page shows an "Open reset link"
+button so the flow still works end to end. In production, without working SMTP,
+the endpoint stays generic for privacy and the link is only logged as a
+delivery failure.
